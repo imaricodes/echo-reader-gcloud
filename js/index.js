@@ -14,7 +14,8 @@ let recorder;
 
 // runs real-time transcription and handles global variables
 const run = async () => {
-  console.log("IS RECORDING: ", isRecording);
+
+  
   
   //this wholeif block is what happens when the button is clicked while it says 'stop'
   //if isRecording is true and socket is open (terminate session and close socket)
@@ -35,13 +36,24 @@ const run = async () => {
     const data = await response.json();
 
     if(data.error){
-      alert(data.error)
-    }
-    
+      alert(data.error)}
+
     const { token } = data;
 
     // establish wss with AssemblyAI (AAI) at 16000 sample rate
     socket = await new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`);
+    
+      //if wordCount reaches target
+      const checkForMaxWords = (wordCount, maxWords) => {
+        if (wordCount.length == maxWords) {
+          socket.send(JSON.stringify({terminate_session: true}));
+          socket.close();
+          console.log(`${maxWords} words said`);
+          console.log(socket.readyState);
+        }
+      }
+
+
 
     // handle incoming messages to display transcription to the DOM
     // this is the message returned from assembly.ai
@@ -50,14 +62,11 @@ const run = async () => {
       let msg = '';
       const res = JSON.parse(message.data);
       console.log('res (result from api):', res);
+      console.log('words array: ',res.words);
       
-      if (res.words.length == 4) {
-        socket.send(JSON.stringify({terminate_session: true}));
-        socket.close();
-        console.log(socket.readyState);
-        console.log('FOUR WORDS REACHED');
-        
-      }
+      //CHANGE: add wordsArray, check for Max Words
+      let wordsArray = res.words
+      checkForMaxWords(wordsArray, 3)
     
 
       //this takes the value of audio_start from res object (which is 0). Zero then becmoes the key in the destructurin process. This is why in the new 'text' object,  res.text is at index 0. I still am not clear why it looks why res.text is being destructured to an object according to the cl, but looks like an array in the syntax. It is not in array format until Object.keys is applied to 'texts' object. Object.keys returns an array.. but the keys array object below does not have the text! 
@@ -146,7 +155,7 @@ const run = async () => {
   isRecording = !isRecording; //return isRecording value to false
   console.log('is recording end of script: ', isRecording);
   buttonEl.innerText = isRecording ? 'Stop' : 'Record';
-  titleEl.innerText = isRecording ? 'Click stop to end recording!' : 'Click start to begin recording!'
+  titleEl.innerText = isRecording ? 'Click stop to end recording!' : 'Click start to begin recording!';
 };
 
 buttonEl.addEventListener('click', () => run());
