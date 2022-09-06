@@ -1,6 +1,10 @@
+//'npm run server' to start server
+
+require ('dotenv').config()
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
+const ASSEMBLY_API_KEY = process.env.ASSEMBLY_API_KEY
 
 const app = express();
 app.use(express.json());
@@ -10,7 +14,7 @@ app.get('/', async (req, res) => {
   try {
     const response = await axios.post('https://api.assemblyai.com/v2/realtime/token', // use account token to get a temp user token
       { expires_in: 3600 }, // can set a TTL timer in seconds.
-      { headers: { authorization: '73396597221e44db8f63642b5875b598' } }); // AssemblyAI API Key goes here
+      { headers: { authorization: ASSEMBLY_API_KEY } }); // AssemblyAI API Key goes here
     const { data } = response;
     res.json(data);
   } catch (error) {
