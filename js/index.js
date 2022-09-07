@@ -11,6 +11,9 @@ messageEl.style.display = 'none';
 let isRecording = false;
 let socket;
 let recorder;
+let readingPrompt = ["the", "fat", "cat", "ran", "fast"]
+let maxWords = readingPrompt.length
+
 
 // runs real-time transcription and handles global variables
 const run = async () => {
@@ -32,8 +35,8 @@ const run = async () => {
       recorder = null;
     }
   } else {
-    const response = await fetch('http://localhost:8000'); // get temp session token from server.js (backend)
-    const data = await response.json();
+      const response = await fetch('http://localhost:8000'); // get temp session token from server.js (backend)
+      const data = await response.json();
 
     if(data.error){
       alert(data.error)}
@@ -42,17 +45,50 @@ const run = async () => {
 
     // establish wss with AssemblyAI (AAI) at 16000 sample rate
     socket = await new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`);
+
     
-      //if wordCount reaches target
-      const checkForMaxWords = (wordCount, maxWords) => {
-        if (wordCount.length == maxWords) {
-          socket.send(JSON.stringify({terminate_session: true}));
-          socket.close();
-          console.log(`${maxWords} words said`);
-          console.log(socket.readyState);
-        }
+    /** *********  FUNCTIONS ************ */
+
+    /** If word count reaches max:
+ * terminate api session
+ * close socket
+ */
+    const checkForMaxWords = async (wordsArray, maxWords) => {
+      console.log('checking for max words');
+      if (wordsArray.length >= maxWords) {
+        socket.send(JSON.stringify({terminate_session: true}));
+        socket.close();
+        console.log(`${maxWords} words said`);
+        console.log(socket.readyState);
       }
 
+    }
+
+    /** DECLARE OBJECT TO STORE WORDS TRANSCRIBED */
+    const transcribedWords = {
+      0: {
+          text: "",
+          match: null
+      },
+      1: {
+          text: "",
+          match: null
+
+      },
+      2: {
+          text: "",
+          match: null
+      },
+      3: {
+          text: "",
+          match: null
+      }
+    }
+
+    //copy transcribed words array to transcribedWords
+    let copyWordArrayToObj =  () => {
+      
+    }
 
 
     // handle incoming messages to display transcription to the DOM
@@ -61,15 +97,23 @@ const run = async () => {
     socket.onmessage = (message) => {
       let msg = '';
       const res = JSON.parse(message.data);
-      console.log('res (result from api):', res);
+      // console.log('res (result from api):', res);
       console.log('words array: ',res.words);
       
-      //CHANGE: add wordsArray, check for Max Words
+    
       let wordsArray = res.words
-      checkForMaxWords(wordsArray, 3)
+      console.log('WORDS ARRAY:', wordsArray);
+
+
+      //close session and socket if max words reached
+      checkForMaxWords(wordsArray, maxWords)
+      console.log('should be last');
+
+      //translate to an object
     
 
       //this takes the value of audio_start from res object (which is 0). Zero then becmoes the key in the destructurin process. This is why in the new 'text' object,  res.text is at index 0. I still am not clear why it looks why res.text is being destructured to an object according to the cl, but looks like an array in the syntax. It is not in array format until Object.keys is applied to 'texts' object. Object.keys returns an array.. but the keys array object below does not have the text! 
+      
       texts[res.audio_start] = res.text;
       
       console.log("texts:", texts);
