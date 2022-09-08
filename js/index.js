@@ -6,6 +6,9 @@ const buttonEl = document.getElementById('button');
 const messageEl = document.getElementById('message');
 const titleEl = document.getElementById('real-time-title');
 
+import { testOtherScript } from './languageProcessing.js'
+testOtherScript()
+
 // set initial state of application variables
 messageEl.style.display = 'none';
 let isRecording = false;
@@ -20,7 +23,7 @@ const run = async () => {
 
   
   
-  //this wholeif block is what happens when the button is clicked while it says 'stop'
+  //this whole if block is what happens when the button is clicked while it says 'stop'
   //if isRecording is true and socket is open (terminate session and close socket)
   //if a recorder exists (pause recording and set value to null)
   if (isRecording) { 
@@ -53,7 +56,7 @@ const run = async () => {
  * terminate api session
  * close socket
  */
-    const checkForMaxWords = async (wordsArray, maxWords) => {
+    const checkForMaxWords = (wordsArray, maxWords) => {
       console.log('checking for max words');
       if (wordsArray.length >= maxWords) {
         socket.send(JSON.stringify({terminate_session: true}));
@@ -85,7 +88,7 @@ const run = async () => {
       }
     }
 
-    //copy transcribed words array to transcribedWords
+    //TODO: copy transcribed words array to transcribedWords
     let copyWordArrayToObj =  () => {
       
     }
@@ -195,6 +198,7 @@ const run = async () => {
         .catch((err) => console.error(err));
     };
   }
+
 
   isRecording = !isRecording; //return isRecording value to false
   console.log('is recording end of script: ', isRecording);
