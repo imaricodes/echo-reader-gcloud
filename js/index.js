@@ -20,12 +20,14 @@ let maxWords = readingPrompt.length
 
 /** *********  FUNCTIONS ************ */
 
+
+
     let checkForMaxWords = (utterancesArray, maxWords) => {
       // console.log('UTTERANCE ARRAY LENGTH  ', utterancesArray.length);
-      if (utterancesArray.length !== maxWords) {
+      if (utterancesArray.length == maxWords) {
         terminateAssemblySession();
         closeSocket();
-      } else {return}
+      } 
     }
     
     //this function creates an empty array of objects to store transcribed utterances
@@ -55,7 +57,7 @@ let maxWords = readingPrompt.length
       return arr
     }
 
-    const terminateAssemblySession = () => {
+    const terminateAssemblySession = async () => {
       socket.send(JSON.stringify({terminate_session: true}))
     }
 
@@ -110,14 +112,13 @@ const run = async () => {
       let utterancesArray = res.words
       console.log('WORDS ARRAY FROM API:', utterancesArray);
       
-
-      //close session and socket if max words reached
-      console.log('UTTERANCE ARRAY LENGTH  ', utterancesArray.length);
-
-      checkForMaxWords(utterancesArray, maxWords)
-
-      // createEmptyObjectArray(utterancesArray, maxWords);
-
+      if (!Array.isArray(utterancesArray) || !utterancesArray.length) {
+        // array does not exist, is not an array, or is empty
+        // ⇒ do not attempt to process array
+        console.log('NO ARRAY YET!');
+      } else {
+        checkForMaxWords(utterancesArray, maxWords)
+      }
 
       //this takes the value of audio_start from res object (which is 0). Zero then becmoes the key in the destructurin process. This is why in the new 'text' object,  res.text is at index 0. I still am not clear why it looks why res.text is being destructured to an object according to the cl, but looks like an array in the syntax. It is not in array format until Object.keys is applied to 'texts' object. Object.keys returns an array.. but the keys array object below does not have the text! 
       
