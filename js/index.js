@@ -18,14 +18,62 @@ let readingPrompt = ["the", "fat", "cat", "ran", "fast"]
 let maxWords = readingPrompt.length
 
 
+/** *********  FUNCTIONS ************ */
+
+    let checkForMaxWords = (utterancesArray, maxWords) => {
+      // console.log('UTTERANCE ARRAY LENGTH  ', utterancesArray.length);
+      if (utterancesArray.length !== maxWords) {
+        terminateAssemblySession();
+        closeSocket();
+      } else {return}
+    }
+    
+    //this function creates an empty array of objects to store transcribed utterances
+    let createEmptyObjectArray = (wordsArray, maxWords) => {
+      let arr = []
+      let obj = {text: "", match: null}
+      for (let i = 0; i < maxWords; i++) {
+          arr.push(obj)
+      }
+      console.log(`EMPTY OBJECT ARRAY: ${arr}`);
+      return arr
+    }
+
+    //add utterances to empty object array for comparison
+    //returns array
+    const addUtterancesToObjectArray = () => {
+      let arr = []
+      for (const [index, name] of apiResponseArray.entries()) { 
+          arr.push(
+              {
+                  text:`${apiResponseArray[index].text}`,
+                  match: "yes"
+              }
+              )
+          console.log(`ARRAY WITH RESPONSES: ${arr}`);
+      }
+      return arr
+    }
+
+    const terminateAssemblySession = () => {
+      socket.send(JSON.stringify({terminate_session: true}))
+    }
+
+    const closeSocket = () => {
+      socket.close();
+      console.log(socket.readyState);
+      socket = null;
+    }
+    
+        /** *********  END FUNCTIONS ************ */
+
+
+
+
 // runs real-time transcription and handles global variables
+//main entry point
 const run = async () => {
 
-  
-  
-  //this whole if block is what happens when the button is clicked while it says 'stop'
-  //if isRecording is true and socket is open (terminate session and close socket)
-  //if a recorder exists (pause recording and set value to null)
   if (isRecording) { 
     if (socket) {
       socket.send(JSON.stringify({terminate_session: true}));
@@ -49,50 +97,6 @@ const run = async () => {
     // establish wss with AssemblyAI (AAI) at 16000 sample rate
     socket = await new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`);
 
-    
-    /** *********  FUNCTIONS ************ */
-
-    /** If word count reaches max:
- * terminate api session
- * close socket
- */
-    const checkForMaxWords = (wordsArray, maxWords) => {
-      console.log('checking for max words');
-      if (wordsArray.length >= maxWords) {
-        socket.send(JSON.stringify({terminate_session: true}));
-        socket.close();
-        console.log(`${maxWords} words said`);
-        console.log(socket.readyState);
-      }
-
-    }
-
-    /** DECLARE OBJECT TO STORE WORDS TRANSCRIBED */
-    const transcribedWords = {
-      0: {
-          text: "",
-          match: null
-      },
-      1: {
-          text: "",
-          match: null
-
-      },
-      2: {
-          text: "",
-          match: null
-      },
-      3: {
-          text: "",
-          match: null
-      }
-    }
-
-    //TODO: copy transcribed words array to transcribedWords
-    let copyWordArrayToObj =  () => {
-      
-    }
-
 
     // handle incoming messages to display transcription to the DOM
     // this is the message returned from assembly.ai
@@ -100,20 +104,20 @@ const run = async () => {
     socket.onmessage = (message) => {
       let msg = '';
       const res = JSON.parse(message.data);
-      // console.log('res (result from api):', res);
-      console.log('words array: ',res.words);
-      
-    
-      let wordsArray = res.words
-      console.log('WORDS ARRAY:', wordsArray);
+      console.log('res: ', res);
 
+      //extract array of utterances and pass to utterancesArray
+      let utterancesArray = res.words
+      console.log('WORDS ARRAY FROM API:', utterancesArray);
+      
 
       //close session and socket if max words reached
-      checkForMaxWords(wordsArray, maxWords)
-      console.log('should be last');
+      console.log('UTTERANCE ARRAY LENGTH  ', utterancesArray.length);
 
-      //translate to an object
-    
+      checkForMaxWords(utterancesArray, maxWords)
+
+      // createEmptyObjectArray(utterancesArray, maxWords);
+
 
       //this takes the value of audio_start from res object (which is 0). Zero then becmoes the key in the destructurin process. This is why in the new 'text' object,  res.text is at index 0. I still am not clear why it looks why res.text is being destructured to an object according to the cl, but looks like an array in the syntax. It is not in array format until Object.keys is applied to 'texts' object. Object.keys returns an array.. but the keys array object below does not have the text! 
       
