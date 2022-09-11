@@ -43,7 +43,7 @@ let maxWords = readingPrompt.length
 
     //add utterances to empty object array for comparison
     //returns array
-    const addUtterancesToObjectArray = () => {
+    const addUtterancesToObjectArray = (apiResponseArray) => {
       let arr = []
       for (const [index, name] of apiResponseArray.entries()) { 
           arr.push(
@@ -52,7 +52,7 @@ let maxWords = readingPrompt.length
                   match: "yes"
               }
               )
-          console.log(`ARRAY WITH RESPONSES: ${arr}`);
+          console.log(`ARRAY WITH RESPONSE OBJECTS: ${arr}`);
       }
       return arr
     }
@@ -112,16 +112,24 @@ const run = async () => {
       let utterancesArray = res.words
       console.log('WORDS ARRAY FROM API:', utterancesArray);
       
+      //this was needed so that checkForMaxWords function does not return undefined because array does not exist yet
       if (!Array.isArray(utterancesArray) || !utterancesArray.length) {
         // array does not exist, is not an array, or is empty
         // ⇒ do not attempt to process array
         console.log('NO ARRAY YET!');
       } else {
+        //if target number of words is reached, close connections
         checkForMaxWords(utterancesArray, maxWords)
       }
 
+      //add response text to 
+
       //this takes the value of audio_start from res object (which is 0). Zero then becmoes the key in the destructurin process. This is why in the new 'text' object,  res.text is at index 0. I still am not clear why it looks why res.text is being destructured to an object according to the cl, but looks like an array in the syntax. It is not in array format until Object.keys is applied to 'texts' object. Object.keys returns an array.. but the keys array object below does not have the text! 
       
+
+      //TODO: evaluate utterances before showing on screen
+
+      //print utterances
       texts[res.audio_start] = res.text;
       
       console.log("texts:", texts);
@@ -203,6 +211,7 @@ const run = async () => {
         .catch((err) => console.error(err));
     };
   }
+
 
 
   isRecording = !isRecording; //return isRecording value to false
