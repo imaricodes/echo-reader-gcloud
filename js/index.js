@@ -14,48 +14,78 @@ messageEl.style.display = 'none';
 let isRecording = false;
 let socket;
 let recorder;
-let readingPrompt = ["the", "fat", "cat", "ran", "fast"]
-let maxWords = readingPrompt.length
+let readingPrompt = ["the", "fat", "cat", "ran", "fast"];
+let maxWords = readingPrompt.length;
+let userResponse;
+let msg = '';
 
 
 /** *********  FUNCTIONS ************ */
 
-
-
-    let checkForMaxWords = (utterancesArray, maxWords) => {
-      // console.log('UTTERANCE ARRAY LENGTH  ', utterancesArray.length);
-      if (utterancesArray.length == maxWords) {
+    let checkForMaxWords = (arr, maxWords) => {
+      if (arr.length >= maxWords) {
+        console.log('MAX WORDS REACHED');
+        console.log(`max word arr length: ${arr.length}`)
         terminateAssemblySession();
         closeSocket();
+        return true
       } 
+      return false
     }
     
+
+    //compare strings index and return t/f for match
+  
+    const compareStrings = (a,b) => {
+        let result
+        result = JSON.stringify(a) === JSON.stringify(b)
+        if (result === true) {
+            console.log(`compared true`)
+        }
+        else {
+            console.log(`compared false`)
+        }
+        return result
+    }
+
+
     //this function creates an empty array of objects to store transcribed utterances
-    let createEmptyObjectArray = (wordsArray, maxWords) => {
+    let pushResponsesToArray = (preProcessedArray, readingPrompt) => {
+
       let arr = []
-      let obj = {text: "", match: null}
-      for (let i = 0; i < maxWords; i++) {
-          arr.push(obj)
-      }
-      console.log(`EMPTY OBJECT ARRAY: ${arr}`);
+      for (const [index, name] of readingPrompt.entries()) {
+        let match = ""
+        let cue = readingPrompt[index]
+        let response = preProcessedArray[index].text
+
+        console.log(`RESPONSE: ${JSON.stringify(response)}`)
+
+        let evaluation = compareStrings(cue, response)
+        evaluation ? match = 'true' : match = 'false'
+
+          arr.push({
+            cue: readingPrompt[index],
+            response: preProcessedArray[index].text,
+            match: match
+          })
+                }
+      // console.log(`object array!: ${JSON.stringify(arr)}`)
       return arr
     }
 
-    //add utterances to empty object array for comparison
-    //returns array
-    const addUtterancesToObjectArray = (apiResponseArray) => {
-      let arr = []
-      for (const [index, name] of apiResponseArray.entries()) { 
-          arr.push(
-              {
-                  text:`${apiResponseArray[index].text}`,
-                  match: "yes"
-              }
-              )
-          console.log(`ARRAY WITH RESPONSE OBJECTS: ${arr}`);
+
+    const showResponse = (arr) => {
+       
+      for (const [index, name] of arr.entries()) {
+        console.log(`ENTRIES ${arr[index].response}`)
+        // console.log(`ENTRIES`)
+        msg+= arr[index].response + ' '
+
+          
       }
-      return arr
-    }
+  }
+
+
 
     const terminateAssemblySession = async () => {
       socket.send(JSON.stringify({terminate_session: true}))
@@ -98,59 +128,74 @@ const run = async () => {
 
     // establish wss with AssemblyAI (AAI) at 16000 sample rate
     socket = await new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`);
-
+    
 
     // handle incoming messages to display transcription to the DOM
     // this is the message returned from assembly.ai
     const texts = {};
     socket.onmessage = (message) => {
-      let msg = '';
+      console.log("BACK AT THE TOP")
+     
       const res = JSON.parse(message.data);
       console.log('res: ', res);
 
-      //extract array of utterances and pass to utterancesArray
-      let utterancesArray = res.words
-      console.log('WORDS ARRAY FROM API:', utterancesArray);
-      
-      //this was needed so that checkForMaxWords function does not return undefined because array does not exist yet
-      if (!Array.isArray(utterancesArray) || !utterancesArray.length) {
+      let preProcessedArray = res.words
+      console.log(`intermediate array: ${JSON.stringify(preProcessedArray)}`)
+
+      if (!Array.isArray(res.words) || !res.words.length) {
+        console.log(`no array yet`)
         // array does not exist, is not an array, or is empty
         // ⇒ do not attempt to process array
-        console.log('NO ARRAY YET!');
+
       } else {
-        //if target number of words is reached, close connections
-        checkForMaxWords(utterancesArray, maxWords)
+          // checkForMaxWords(preProcessedArray, maxWords) ? pushResponsesToArray(preProcessedArray, readingPrompt) : console.log(`max words false ${preProcessedArray.length}`)
+
+          if (checkForMaxWords(preProcessedArray, maxWords)) {
+            userResponse = pushResponsesToArray(preProcessedArray, readingPrompt)
+            console.log(`FINISHED MAKING OBJECT ARRAY ${JSON.stringify(userResponse)}`)
+            showResponse(userResponse)
+          }
+
+          //truncate res array if length greather than maxWords
+          if (preProcessedArray.length > 5) {
+            console.log(`array length greater than 5`)
+            console.log(`over 5 length ${preProcessedArray.length}`)
+            let trimmedArray = preProcessedArray.splice(4, 1) //needs work for number of elements to delete
+            console.log(`trimmed array: ${trimmedArray}`)
+          }
+             
       }
 
-      //add response text to 
-
+      
+ 
       //this takes the value of audio_start from res object (which is 0). Zero then becmoes the key in the destructurin process. This is why in the new 'text' object,  res.text is at index 0. I still am not clear why it looks why res.text is being destructured to an object according to the cl, but looks like an array in the syntax. It is not in array format until Object.keys is applied to 'texts' object. Object.keys returns an array.. but the keys array object below does not have the text! 
       
 
       //TODO: evaluate utterances before showing on screen
 
+      
+
       //print utterances
-      texts[res.audio_start] = res.text;
+      // texts[res.audio_start] = res.text;
       
-      console.log("texts:", texts);
-      const keys = Object.keys(texts);
+      // const keys = Object.keys(texts);
         
-      // console.log('keys', keys);
 
-      keys.sort((a, b) => a - b);
+      // keys.sort((a, b) => a - b);
 
-      // console.log('Keys sorted', keys);
+      // // console.log('Keys sorted', keys);
       
-      for (const key of keys) {
-        //need to decipher this 
-        if (texts[key]) {
 
-          msg += ` ${texts[key]}`;
-        }
-      }
+      // for (const key of keys) {
+      //   //need to decipher this 
+      //   if (texts[key]) {
+
+      //     msg += ` ${texts[key]}`;
+      //   }
+      // }
 
       messageEl.innerText = msg;
-    };
+    }; //end 'on message' block
 
     socket.onerror = (event) => {
       console.error(event);
