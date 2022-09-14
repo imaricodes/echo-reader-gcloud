@@ -18,7 +18,7 @@ let readingPrompt = ["the", "fat", "cat", "ran", "fast"];
 let maxWords = readingPrompt.length;
 let userResponse;
 let msg = '';
-
+let counter = 1
 
 /** *********  FUNCTIONS ************ */
 
@@ -26,8 +26,9 @@ let msg = '';
       if (arr.length >= maxWords) {
         console.log('MAX WORDS REACHED');
         console.log(`max word arr length: ${arr.length}`)
-        terminateAssemblySession();
-        closeSocket();
+        
+        // terminateAssemblySession();
+        // closeSocket();
         return true
       } 
       return false
@@ -35,7 +36,7 @@ let msg = '';
     
 
     //compare strings index and return t/f for match
-  
+    //TODO: compare lower case strings, remove punctuation before comparison.. comparision happens after final transcript
     const compareStrings = (a,b) => {
         let result
         result = JSON.stringify(a) === JSON.stringify(b)
@@ -135,7 +136,8 @@ const run = async () => {
     const texts = {};
     socket.onmessage = (message) => {
       console.log("BACK AT THE TOP")
-     
+      console.log(`MESSAGE A ${JSON.stringify(message.message_type)}`)
+
       const res = JSON.parse(message.data);
       console.log('res: ', res);
 
@@ -151,18 +153,25 @@ const run = async () => {
           // checkForMaxWords(preProcessedArray, maxWords) ? pushResponsesToArray(preProcessedArray, readingPrompt) : console.log(`max words false ${preProcessedArray.length}`)
 
           if (checkForMaxWords(preProcessedArray, maxWords)) {
+            recorder.pauseRecording();
+            console.log(`PAUSED RECORDING`)
+            console.log(`MESSAGE B ${JSON.stringify(res.message_type)}`)
+            if (res.message_type == "FinalTranscript") {
+              console.log(`FINAL TRANSCRIPT!!!!`)
+            }
             userResponse = pushResponsesToArray(preProcessedArray, readingPrompt)
-            console.log(`FINISHED MAKING OBJECT ARRAY ${JSON.stringify(userResponse)}`)
-            showResponse(userResponse)
+          console.log(`FINISHED MAKING OBJECT ARRAY ${JSON.stringify(userResponse)}`)
+          showResponse(userResponse)
+            
           }
 
           //truncate res array if length greather than maxWords
-          if (preProcessedArray.length > 5) {
-            console.log(`array length greater than 5`)
-            console.log(`over 5 length ${preProcessedArray.length}`)
-            let trimmedArray = preProcessedArray.splice(4, 1) //needs work for number of elements to delete
-            console.log(`trimmed array: ${trimmedArray}`)
-          }
+          // if (preProcessedArray.length > 5) {
+          //   console.log(`array length greater than 5`)
+          //   console.log(`over 5 length ${preProcessedArray.length}`)
+          //   let trimmedArray = preProcessedArray.splice(4, 1) //needs work for number of elements to delete
+          //   console.log(`trimmed array: ${trimmedArray}`)
+          // }
              
       }
 
