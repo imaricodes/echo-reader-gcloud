@@ -39,7 +39,7 @@ let counter = 1
     //TODO: compare lower case strings, remove punctuation before comparison.. comparision happens after final transcript
     const compareStrings = (a,b) => {
         let result
-        result = JSON.stringify(a) === JSON.stringify(b)
+        result = JSON.stringify(a).toLowerCase() === JSON.stringify(b).toLowerCase()
         if (result === true) {
             console.log(`compared true`)
         }
@@ -55,9 +55,9 @@ let counter = 1
 
       let arr = []
       for (const [index, name] of readingPrompt.entries()) {
-        let match = ""
         let cue = readingPrompt[index]
         let response = preProcessedArray[index].text
+        let match = ""
 
         console.log(`RESPONSE: ${JSON.stringify(response)}`)
 
@@ -94,7 +94,7 @@ let counter = 1
 
     const closeSocket = () => {
       socket.close();
-      console.log(socket.readyState);
+      console.log(`socket state: ${socket.readyState}`);
       socket = null;
     }
     
@@ -154,15 +154,17 @@ const run = async () => {
 
           if (checkForMaxWords(preProcessedArray, maxWords)) {
             recorder.pauseRecording();
+            terminateAssemblySession();
             console.log(`PAUSED RECORDING`)
             console.log(`MESSAGE B ${JSON.stringify(res.message_type)}`)
+            userResponse = pushResponsesToArray(preProcessedArray, readingPrompt)
             if (res.message_type == "FinalTranscript") {
               console.log(`FINAL TRANSCRIPT!!!!`)
+              showResponse(userResponse)
+              closeSocket();
             }
-            userResponse = pushResponsesToArray(preProcessedArray, readingPrompt)
-          console.log(`FINISHED MAKING OBJECT ARRAY ${JSON.stringify(userResponse)}`)
-          showResponse(userResponse)
-            
+
+          // console.log(`FINISHED MAKING OBJECT ARRAY ${JSON.stringify(userResponse)}`)
           }
 
           //truncate res array if length greather than maxWords
