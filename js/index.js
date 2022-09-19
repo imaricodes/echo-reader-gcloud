@@ -60,10 +60,13 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 
     //this function returns an array of objects
     let evaluateSession = (cueObj, responseObj) => {
-    
+      
       let cueEvaluate =[]
       cueObj.evaluate.map( (item => cueEvaluate.push(item)))
       
+      let cueDisplay =[]
+      cueObj.display.map( (item => cueDisplay.push(item)))
+
       let responseEvaluate = []
       responseObj.evaluate.map( (item => responseEvaluate.push(item)))
       
@@ -72,7 +75,8 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 
  
       let arr = []
-
+      arr.push(responseDisplay)
+      arr.push(cueDisplay)
       for (const [index, name] of cueEvaluate.entries()) {
         console.log(`cue evaulate array index:  ${cueEvaluate[index]} , ${responseEvaluate[index]}`)
         let cue = cueEvaluate[index]
@@ -83,10 +87,10 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
         evaluation ? match = 'true' : match = 'false'
 
           arr.push({
-            cue: cue,
-            response: response,
+            cueWord: cue,
+            responseWord: response,
             match: match,
-            responseDisplay: responseDisplay[index]
+            responseDisplayWord: responseDisplay[index]
           })
                 }
       console.log(`evaluated array of objects!: ${JSON.stringify(arr)}`)
@@ -94,9 +98,9 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
     }
 
 
-    const showResponse = (session) => {
+    const showResponse = (sessionResults) => {
        let display = []
-       session.map( (item => display.push(item.responseDisplay)))
+       sessionResults.map( (item => display.push(item.responseDisplay)))
         console.log(`SESSION TO DISPLAY ${JSON.stringify(display)}`)
       for (const [index, name] of display.entries()) {
         msg+= display[index] + ' ' 
@@ -173,8 +177,8 @@ const run = async () => {
               let processedResponse = processResponse(res.text)
               sessionResults = evaluateSession(processedCue, processedResponse)
 
-              showResponse(sessionResults)
-
+              // showResponse(sessionResults)
+              displaySessionResults(sessionResults)
               closeSocket();
             }
 
