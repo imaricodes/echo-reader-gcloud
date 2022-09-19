@@ -6,22 +6,17 @@ const buttonEl = document.getElementById('button');
 const messageEl = document.getElementById('message');
 const titleEl = document.getElementById('real-time-title');
 
-// import { testOtherScript } from './languageProcessing.js'
-// testOtherScript()
-
 // set initial state of application variables
 messageEl.style.display = 'none';
 let isRecording = false;
 let socket;
 let recorder;
-let readingPrompt = ["the", "fat", "cat", "ran", "fast"];
 let sessionResults;
 let msg = '';
 
 let readingPrompts = [
   'Many bees do not sting!',
   'I like apples, oranges, and grapes.'
-  
 ]
 
 let maxWords = 6;
@@ -29,7 +24,6 @@ let maxWords = 6;
 let processedCue;
 processedCue = processCue(readingPrompts);
 console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
-
 
 
 /** *********  FUNCTIONS ************ */
@@ -124,8 +118,6 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
         /** *********  END FUNCTIONS ************ */
 
 
-
-
 // runs real-time transcription and handles global variables
 //main entry point
 const run = async () => {
@@ -170,62 +162,29 @@ const run = async () => {
         // ⇒ do not attempt to process array
 
       } else {
-          // checkForMaxWords(preProcessedArray, maxWords) ? pushResponsesToArray(preProcessedArray, readingPrompt) : console.log(`max words false ${preProcessedArray.length}`)
-
+        
           if (checkForMaxWords(preProcessedArray, maxWords)) {
             recorder.pauseRecording();
 
             terminateAssemblySession();
 
-            // console.log(`PAUSED RECORDING`)
-
-            // console.log(`MESSAGE B ${JSON.stringify(res.message_type)}`)
-
             if (res.message_type == "FinalTranscript") {
-              console.log(`FINAL TRANSCRIPT!!!!`)
+              console.log(`FINAL TRANSCRIPT`)
               let processedResponse = processResponse(res.text)
-              console.log(`processed resopnse: ${JSON.stringify(processedResponse)}`)
-      
-        
-              console.log(Array.isArray(processedResponse.evaluate))
-              
-              // const mappedArray = processedResponse.evaluate.map( (item => item))
-              // console.log("IS MAPPED ARRAY AN ARRAY?", Array.isArray(mappedArray))
-
-              // console.log(`MAPPED ARAY ${JSON.stringify(mappedArray)}`)
-       
-              // for (const [index, name] of mappedArray.entries()) {
-              //   // console.log(`MAPPED ARRAY PROOF ${mappedArray[index]}`)
-
-              // }
-      
               sessionResults = evaluateSession(processedCue, processedResponse)
 
-          
               showResponse(sessionResults)
+
               closeSocket();
             }
 
-          // console.log(`FINISHED MAKING OBJECT ARRAY ${JSON.stringify(userResponse)}`)
           }
-
-          //truncate res array if length greather than maxWords
-          // if (preProcessedArray.length > 5) {
-          //   console.log(`array length greater than 5`)
-          //   console.log(`over 5 length ${preProcessedArray.length}`)
-          //   let trimmedArray = preProcessedArray.splice(4, 1) //needs work for number of elements to delete
-          //   console.log(`trimmed array: ${trimmedArray}`)
-          // }
              
       }
 
       
  
       //this takes the value of audio_start from res object (which is 0). Zero then becmoes the key in the destructurin process. This is why in the new 'text' object,  res.text is at index 0. I still am not clear why it looks why res.text is being destructured to an object according to the cl, but looks like an array in the syntax. It is not in array format until Object.keys is applied to 'texts' object. Object.keys returns an array.. but the keys array object below does not have the text! 
-      
-
-      //TODO: evaluate utterances before showing on screen
-
       
 
       //print utterances
