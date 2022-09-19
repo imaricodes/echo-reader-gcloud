@@ -6,8 +6,8 @@ const buttonEl = document.getElementById('button');
 const messageEl = document.getElementById('message');
 const titleEl = document.getElementById('real-time-title');
 
-import { testOtherScript } from './languageProcessing.js'
-testOtherScript()
+// import { testOtherScript } from './languageProcessing.js'
+// testOtherScript()
 
 // set initial state of application variables
 messageEl.style.display = 'none';
@@ -15,10 +15,22 @@ let isRecording = false;
 let socket;
 let recorder;
 let readingPrompt = ["the", "fat", "cat", "ran", "fast"];
-let maxWords = readingPrompt.length;
-let userResponse;
+let sessionResults;
 let msg = '';
-let counter = 1
+
+let readingPrompts = [
+  'Many bees do not sting!',
+  'I like apples, oranges, and grapes.'
+  
+]
+
+let maxWords = 6;
+
+let processedCue;
+processedCue = processCue(readingPrompts);
+console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
+
+
 
 /** *********  FUNCTIONS ************ */
 
@@ -39,7 +51,9 @@ let counter = 1
     //TODO: compare lower case strings, remove punctuation before comparison.. comparision happens after final transcript
     const compareStrings = (a,b) => {
         let result
-        result = JSON.stringify(a).toLowerCase() === JSON.stringify(b).toLowerCase()
+
+        result = a === b 
+
         if (result === true) {
             console.log(`compared true`)
         }
@@ -50,39 +64,48 @@ let counter = 1
     }
 
 
-    //this function creates an empty array of objects to store transcribed utterances
-    let pushResponsesToArray = (preProcessedArray, readingPrompt) => {
+    //this function returns an array of objects
+    let evaluateSession = (cueObj, responseObj) => {
+    
+      let cueEvaluate =[]
+      cueObj.evaluate.map( (item => cueEvaluate.push(item)))
+      
+      let responseEvaluate = []
+      responseObj.evaluate.map( (item => responseEvaluate.push(item)))
+      
+      let responseDisplay = []
+      responseObj.display.map( (item => responseDisplay.push(item)))
 
+ 
       let arr = []
-      for (const [index, name] of readingPrompt.entries()) {
-        let cue = readingPrompt[index]
-        let response = preProcessedArray[index].text
-        let match = ""
 
-        console.log(`RESPONSE: ${JSON.stringify(response)}`)
+      for (const [index, name] of cueEvaluate.entries()) {
+        console.log(`cue evaulate array index:  ${cueEvaluate[index]} , ${responseEvaluate[index]}`)
+        let cue = cueEvaluate[index]
+        let response = responseEvaluate[index]
+        let match = ""
 
         let evaluation = compareStrings(cue, response)
         evaluation ? match = 'true' : match = 'false'
 
           arr.push({
-            cue: readingPrompt[index],
-            response: preProcessedArray[index].text,
-            match: match
+            cue: cue,
+            response: response,
+            match: match,
+            responseDisplay: responseDisplay[index]
           })
                 }
-      // console.log(`object array!: ${JSON.stringify(arr)}`)
+      console.log(`evaluated array of objects!: ${JSON.stringify(arr)}`)
       return arr
     }
 
 
-    const showResponse = (arr) => {
-       
-      for (const [index, name] of arr.entries()) {
-        console.log(`ENTRIES ${arr[index].response}`)
-        // console.log(`ENTRIES`)
-        msg+= arr[index].response + ' '
-
-          
+    const showResponse = (session) => {
+       let display = []
+       session.map( (item => display.push(item.responseDisplay)))
+        console.log(`SESSION TO DISPLAY ${JSON.stringify(display)}`)
+      for (const [index, name] of display.entries()) {
+        msg+= display[index] + ' ' 
       }
   }
 
@@ -136,13 +159,10 @@ const run = async () => {
     const texts = {};
     socket.onmessage = (message) => {
       console.log("BACK AT THE TOP")
-      console.log(`MESSAGE A ${JSON.stringify(message.message_type)}`)
 
       const res = JSON.parse(message.data);
-      console.log('res: ', res);
 
       let preProcessedArray = res.words
-      console.log(`intermediate array: ${JSON.stringify(preProcessedArray)}`)
 
       if (!Array.isArray(res.words) || !res.words.length) {
         console.log(`no array yet`)
@@ -154,13 +174,35 @@ const run = async () => {
 
           if (checkForMaxWords(preProcessedArray, maxWords)) {
             recorder.pauseRecording();
+
             terminateAssemblySession();
-            console.log(`PAUSED RECORDING`)
-            console.log(`MESSAGE B ${JSON.stringify(res.message_type)}`)
-            userResponse = pushResponsesToArray(preProcessedArray, readingPrompt)
+
+            // console.log(`PAUSED RECORDING`)
+
+            // console.log(`MESSAGE B ${JSON.stringify(res.message_type)}`)
+
             if (res.message_type == "FinalTranscript") {
               console.log(`FINAL TRANSCRIPT!!!!`)
-              showResponse(userResponse)
+              let processedResponse = processResponse(res.text)
+              console.log(`processed resopnse: ${JSON.stringify(processedResponse)}`)
+      
+        
+              console.log(Array.isArray(processedResponse.evaluate))
+              
+              // const mappedArray = processedResponse.evaluate.map( (item => item))
+              // console.log("IS MAPPED ARRAY AN ARRAY?", Array.isArray(mappedArray))
+
+              // console.log(`MAPPED ARAY ${JSON.stringify(mappedArray)}`)
+       
+              // for (const [index, name] of mappedArray.entries()) {
+              //   // console.log(`MAPPED ARRAY PROOF ${mappedArray[index]}`)
+
+              // }
+      
+              sessionResults = evaluateSession(processedCue, processedResponse)
+
+          
+              showResponse(sessionResults)
               closeSocket();
             }
 
