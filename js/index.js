@@ -98,17 +98,6 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
     }
 
 
-    const showResponse = (sessionResults) => {
-       let display = []
-       sessionResults.map( (item => display.push(item.responseDisplay)))
-        console.log(`SESSION TO DISPLAY ${JSON.stringify(display)}`)
-      for (const [index, name] of display.entries()) {
-        msg+= display[index] + ' ' 
-      }
-  }
-
-
-
     const terminateAssemblySession = async () => {
       socket.send(JSON.stringify({terminate_session: true}))
     }
@@ -176,9 +165,8 @@ const run = async () => {
               console.log(`FINAL TRANSCRIPT`)
               let processedResponse = processResponse(res.text)
               sessionResults = evaluateSession(processedCue, processedResponse)
-
-              // showResponse(sessionResults)
-              displaySessionResults(sessionResults)
+              
+              displayResponses(sessionResults)
               closeSocket();
             }
 

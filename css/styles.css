@@ -52,3 +52,26 @@ header {
   padding: 1em;
   transition: .5s ease-in;
 }
+
+/* MY CSS */
+
+.response-container {
+  display: flex;
+  background-color: pink;
+  width: 500px;
+  padding: 10px;
+  gap: 10px;
+}
+
+.word-res {
+  padding: 5px;
+  background-color: gray;
+  color: green;
+  
+  
+}
+
+
+.false {
+  color: red;
+}
