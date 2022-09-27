@@ -55,23 +55,33 @@ header {
 
 /* MY CSS */
 
+p {
+  font-family: 'Roboto', sans-serif;
+}
+
+#displayCue {
+  font-size: 36px;
+}
 .response-container {
+  font-family: 'Roboto', sans-serif;
+  font-size: 36px;
   display: flex;
-  background-color: pink;
-  width: 500px;
+  /* background-color: pink; */
+  width: 100%;
   padding: 10px;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .word-res {
   padding: 5px;
-  background-color: gray;
-  color: green;
+  /* background-color: gray; */
+  color: rgb(4, 4, 4);
   
   
 }
 
 
 .false {
-  color: red;
+  color: rgb(218, 89, 89);
 }

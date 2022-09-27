@@ -31,7 +31,7 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
     let checkForMaxWords = (arr, maxWords) => {
       if (arr.length >= maxWords) {
         console.log('MAX WORDS REACHED');
-        console.log(`max word arr length: ${arr.length}`)
+        console.log(`current array length: ${arr.length}`)
         
         // terminateAssemblySession();
         // closeSocket();
@@ -157,6 +157,7 @@ const run = async () => {
       } else {
         
           if (checkForMaxWords(preProcessedArray, maxWords)) {
+
             recorder.pauseRecording();
 
             terminateAssemblySession();
@@ -252,6 +253,7 @@ const run = async () => {
               };
               //this is how blob is passed to reader
               reader.readAsDataURL(blob);
+  
             },
           });
 

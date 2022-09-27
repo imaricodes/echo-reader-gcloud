@@ -6,7 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="./css/reset.css">
-  <link rel="stylesheet" href="./css/styles.css"> 
+  <link rel="stylesheet" href="./css/styles.css">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
 </head>
 <script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
 <body>
@@ -18,13 +23,14 @@
     <p id="real-time-title" class="real-time-interface__title">Click start to begin recording!</p>
     <p id="button" class="real-time-interface__button">Start</p>
     <p id="message" class="real-time-interface__message"></p>
-    <p id="displayCue"></p>
+    <p id="displayCue">I like apples, oranges, and grapes.</p>
     <p id="displayResult"></p>
   </div>
 
   <div class="response-container" id = "response-container"></div>
   <!-- <script type = "module" src="./js/languageProcessing.js"></script> -->
 
+  <script src="./donottrack/devHelperUtilities.js"></script>
   <script src="./js/displayUtilities.js"></script>
   <script src="./js/processes.js"></script>
   <script src="./js/index.js"></script>
