@@ -16,13 +16,17 @@ let msg = '';
 
 let readingPrompts = [
   'Many bees do not sting!',
-  'I like apples, oranges, and grapes.'
+  'I like apples, oranges, and beer.'
 ]
 
 let maxWords = 6;
 
 let processedCue;
 processedCue = processCue(readingPrompts);
+
+//display selected cue, fixed to index 1 of reading Prompts for now, dynamic later
+displayCue(processedCue)
+
 console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 
 
@@ -167,6 +171,7 @@ const run = async () => {
               let processedResponse = processResponse(res.text)
               sessionResults = evaluateSession(processedCue, processedResponse)
               
+            
               displayResponses(sessionResults)
               closeSocket();
             }
