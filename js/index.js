@@ -16,7 +16,7 @@ let msg = '';
 
 let readingPrompts = [
   'Many bees do not sting!',
-  'I like apples, oranges, and beer.'
+  'I like apples, oranges, and feet.'
 ]
 
 let maxWords = 6;
@@ -65,22 +65,20 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
     //this function returns an array of objects
     let evaluateSession = (cueObj, responseObj) => {
       
-      let cueEvaluate =[]
-      cueObj.evaluate.map( (item => cueEvaluate.push(item)))
+      let cueEvaluate = cueObj.evaluate.map( (item => item))
       
-      let cueDisplay =[]
-      cueObj.display.map( (item => cueDisplay.push(item)))
-
-      let responseEvaluate = []
-      responseObj.evaluate.map( (item => responseEvaluate.push(item)))
+      let cueDisplay = cueObj.display.map( (item => item))
       
-      let responseDisplay = []
-      responseObj.display.map( (item => responseDisplay.push(item)))
+      let responseEvaluate = responseObj.evaluate.map( (item => item))
+      
+      let responseDisplay = responseObj.display.map( (item => item))
+      
 
  
       let arr = []
       arr.push(responseDisplay)
       arr.push(cueDisplay)
+
       for (const [index, name] of cueEvaluate.entries()) {
         console.log(`cue evaulate array index:  ${cueEvaluate[index]} , ${responseEvaluate[index]}`)
         let cue = cueEvaluate[index]

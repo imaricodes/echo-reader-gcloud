@@ -29,6 +29,7 @@ let displayResponses = (sessionResults) => {
     
     const length = sessionResults[0].length
 
+
     for (let i = 0; i < length; i++) {
         const newDiv = document.createElement("div")
       
@@ -60,11 +61,9 @@ let displayResponses = (sessionResults) => {
 
 let displayCue = (processedCue) => {
     
-    let cueArray = []
+    const cueArray = processedCue.display.map(item => item)
 
-    processedCue.display.map(item => cueArray.push(item))
-
-    console.dir(`HAM ${cueArray}`)
+    // console.dir(`HAM ${cueArray}`)
 
     const length = cueArray.length
 
