@@ -116,14 +116,17 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 // runs real-time transcription and handles global variables
 //main entry point
 const run = async () => {
+  
+  console.log('Start clicked, isRecording State=', isRecording)
 
   if (isRecording) { 
+    //if socket is open, close it
     if (socket) {
       socket.send(JSON.stringify({terminate_session: true}));
       socket.close();
       socket = null;
     }
-
+    //if instance of recorder, pause recording and null recorder instance
     if (recorder) {
       recorder.pauseRecording();
       recorder = null;
@@ -140,23 +143,35 @@ const run = async () => {
     // establish wss with AssemblyAI (AAI) at 16000 sample rate
     socket = await new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`);
     
-
+    let start = Date.now(); 
     // handle incoming messages to display transcription to the DOM
     // this is the message returned from assembly.ai
     const texts = {};
     socket.onmessage = (message) => {
       console.log("BACK AT THE TOP")
-
+      // console.log(`at top plain ${message}`)
+      // console.log(`at top message ${JSON.stringify(message.audio_start)}`)
+      // console.log(`at top message.data ${JSON.stringify(message.data)}`)
+      
       const res = JSON.parse(message.data);
+      
+      console.log(`attempt two ${JSON.stringify(res.message_type)}`)
 
       let preProcessedArray = res.words
 
       if (!Array.isArray(res.words) || !res.words.length) {
-        console.log(`no array yet`)
+        console.log(`no array content yet`)
+        let end = Date.now();
+        let elapsed = end - start;   
+        console.log('no content elapsed time: ', elapsed/1000);
+
         // array does not exist, is not an array, or is empty
         // ⇒ do not attempt to process array
 
       } else {
+        let end2 = Date.now();
+        let elapsed = end2 - start;   
+        console.log('content but not final elapsed time: ', elapsed/1000);
         
           if (checkForMaxWords(preProcessedArray, maxWords)) {
 
@@ -165,6 +180,7 @@ const run = async () => {
             terminateAssemblySession();
 
             if (res.message_type == "FinalTranscript") {
+              
               console.log(`FINAL TRANSCRIPT`)
               let processedResponse = processResponse(res.text)
               sessionResults = evaluateSession(processedCue, processedResponse)
@@ -215,8 +231,9 @@ const run = async () => {
       socket = null;
     }
 
+    // once socket is open, , create instance of recordRTC, begin recording
     socket.onopen = () => {
-      // once socket is open, begin recording
+      
       messageEl.style.display = '';
       navigator.mediaDevices.getUserMedia({ audio: true }) //this opens client media (asks permission first)
         //pass the media stream to RecordRTC object
@@ -264,12 +281,14 @@ const run = async () => {
         })
         .catch((err) => console.error(err));
     };
+    console.log('end of else block, isRecording State=', isRecording)
+
   }
 
 
+  console.log(' isRecording State right before line 277=', isRecording)
 
-  isRecording = !isRecording; //return isRecording value to false
-  console.log('is recording end of script: ', isRecording);
+  isRecording = !isRecording; 
   buttonEl.innerText = isRecording ? 'Stop' : 'Record';
   titleEl.innerText = isRecording ? 'Click stop to end recording!' : 'Click start to begin recording!';
 };
