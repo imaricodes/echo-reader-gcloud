@@ -14,16 +14,20 @@ let recorder;
 let sessionResults;
 let msg = '';
 
+let maxSessionTime = 2;
+
 let readingPrompts = [
-  'Many bees do not sting!',
-  'I like apples, oranges, and feet.'
+  'I like apples, oranges, and feet.',
+  'Many bees do not sting!'
+  
 ]
 
-let maxWords = 6;
 
 let processedCue;
 processedCue = processCue(readingPrompts);
 
+let maxWords = processedCue.display.length;
+console.log('set maxwords to', maxWords)
 //display selected cue, fixed to index 1 of reading Prompts for now, dynamic later
 displayCue(processedCue)
 
@@ -101,6 +105,7 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 
 
     const terminateAssemblySession = async () => {
+      console.log('assembly session terminated')
       socket.send(JSON.stringify({terminate_session: true}))
     }
 
@@ -110,6 +115,23 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
       socket = null;
     }
     
+
+
+    const calculateTimeOut = (startSessionTime, maxSessionTime) => {
+      let endTime = Date.now();
+      let elapsedSessionTime = (endTime - startSessionTime)/1000;
+      let result = false;  
+        
+      if (elapsedSessionTime >= maxSessionTime) {
+        result = true;
+        console.log('TIMED OUT!')
+      }
+      
+      console.log('elapsed session time' , elapsedSessionTime)
+
+      return result;
+    }
+
         /** *********  END FUNCTIONS ************ */
 
 
@@ -117,7 +139,7 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 //main entry point
 const run = async () => {
   
-  console.log('Start clicked, isRecording State=', isRecording)
+
 
   if (isRecording) { 
     //if socket is open, close it
@@ -143,56 +165,79 @@ const run = async () => {
     // establish wss with AssemblyAI (AAI) at 16000 sample rate
     socket = await new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`);
     
-    let start = Date.now(); 
+    let startSessionTime = Date.now(); 
     // handle incoming messages to display transcription to the DOM
     // this is the message returned from assembly.ai
     const texts = {};
     socket.onmessage = (message) => {
       console.log("BACK AT THE TOP")
-      // console.log(`at top plain ${message}`)
-      // console.log(`at top message ${JSON.stringify(message.audio_start)}`)
-      // console.log(`at top message.data ${JSON.stringify(message.data)}`)
-      
+    
       const res = JSON.parse(message.data);
       
-      console.log(`attempt two ${JSON.stringify(res.message_type)}`)
-
-      let preProcessedArray = res.words
-
-      if (!Array.isArray(res.words) || !res.words.length) {
-        console.log(`no array content yet`)
-        let end = Date.now();
-        let elapsed = end - start;   
-        console.log('no content elapsed time: ', elapsed/1000);
-
-        // array does not exist, is not an array, or is empty
-        // ⇒ do not attempt to process array
-
-      } else {
-        let end2 = Date.now();
-        let elapsed = end2 - start;   
-        console.log('content but not final elapsed time: ', elapsed/1000);
-        
-          if (checkForMaxWords(preProcessedArray, maxWords)) {
-
-            recorder.pauseRecording();
-
-            terminateAssemblySession();
-
-            if (res.message_type == "FinalTranscript") {
-              
-              console.log(`FINAL TRANSCRIPT`)
-              let processedResponse = processResponse(res.text)
-              sessionResults = evaluateSession(processedCue, processedResponse)
-              
-            
-              displayResponses(sessionResults)
-              closeSocket();
-            }
-
-          }
-             
+      console.log('first return: ', JSON.stringify(res.message_type))
+      if (res.message_type == "SessionBegins") {
+          console.log('first beer on me')
+          console.log('is there an array? ', res.words)
       }
+      
+      calculateTimeOut(startSessionTime, maxSessionTime)
+      /** process returned data */
+      if (typeof res.words == "undefined") {
+        console.log('about to return')
+        return
+      } else {
+          if (res.words.length) {
+            console.log('array has length of: ', res.words.length)
+            if (checkForMaxWords(res.words, maxWords)) {
+            
+              // terminateAssemblySession();
+              // recorder.pauseRecording();
+              if (res.message_type == "FinalTranscript") {
+                closeSocket();
+                recorder.stopRecording()
+                console.log(`FINAL TRANSCRIPT received, session terminated`)
+                let processedResponse = processResponse(res.text)
+                sessionResults = evaluateSession(processedCue, processedResponse)  
+                displayResponses(sessionResults)
+              }
+            }
+          }
+   
+      }
+    
+
+      // let preProcessedArray = res.words
+
+      // if (!res.words.length) {
+      //   console.log(`no array content yet`)
+      //   console.log('array in process: ', res.words)
+      //   let endTime = Date.now();
+      //   let elapsedSessionTime = (endTime - startSessionTime)/1000;  
+      //   console.log('elapsed session time' , elapsedSessionTime)
+      //    if (elapsedSessionTime >= maxSessionTime) {
+      //     console.log('time\'s up')
+      //     // terminateAssemblySession() 
+      //    }
+
+      // } else {
+     
+      //     if (checkForMaxWords(res.words, maxWords)) {
+            
+      //       // terminateAssemblySession();
+      //       // recorder.pauseRecording();
+            
+      //       if (res.message_type == "FinalTranscript") {
+              
+      //         closeSocket();
+      //         console.log(`FINAL TRANSCRIPT received, session terminated`)
+      //         let processedResponse = processResponse(res.text)
+      //         sessionResults = evaluateSession(processedCue, processedResponse)        
+      //         displayResponses(sessionResults)
+      //       }
+
+      //     }
+             
+      // }
 
       
  
