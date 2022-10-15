@@ -132,6 +132,13 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
       return result;
     }
 
+
+    let truncateArray = (arr, maxWords) => {
+      arr.splice(maxWords, arr.length-maxWords)
+      console.log('array has been truncated')
+    }
+
+
         /** *********  END FUNCTIONS ************ */
 
 
@@ -186,16 +193,20 @@ const run = async () => {
         console.log('about to return')
         return
       } else {
+          
           if (res.words.length) {
             console.log('array has length of: ', res.words.length)
             if (checkForMaxWords(res.words, maxWords)) {
-            
+              
               // terminateAssemblySession();
               // recorder.pauseRecording();
               if (res.message_type == "FinalTranscript") {
+                terminateAssemblySession();
                 closeSocket();
                 recorder.stopRecording()
                 console.log(`FINAL TRANSCRIPT received, session terminated`)
+                truncateArray(res.words)
+                console.log('new array length ', res.words)
                 let processedResponse = processResponse(res.text)
                 sessionResults = evaluateSession(processedCue, processedResponse)  
                 displayResponses(sessionResults)

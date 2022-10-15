@@ -19,7 +19,7 @@ let displayResponses = (sessionResults) => {
 
         if (sessionResults[i + 2].match == 'false') {
             newDiv.classList.add('false')
-        }
+        } 
 
         //add id to new div, is this necessary? Probably not
         newDiv.id = `res-${i}`
