@@ -195,12 +195,14 @@ const run = async () => {
       } else {
           
           if (res.words.length) {
+            console.log('partial array: ', JSON.stringify(res.words))
             console.log('array has length of: ', res.words.length)
             if (checkForMaxWords(res.words, maxWords)) {
               
               // terminateAssemblySession();
               // recorder.pauseRecording();
               if (res.message_type == "FinalTranscript") {
+                console.log('isRecording state during final transscipt execution', isRecording)
                 terminateAssemblySession();
                 closeSocket();
                 recorder.stopRecording()
@@ -217,64 +219,6 @@ const run = async () => {
       }
     
 
-      // let preProcessedArray = res.words
-
-      // if (!res.words.length) {
-      //   console.log(`no array content yet`)
-      //   console.log('array in process: ', res.words)
-      //   let endTime = Date.now();
-      //   let elapsedSessionTime = (endTime - startSessionTime)/1000;  
-      //   console.log('elapsed session time' , elapsedSessionTime)
-      //    if (elapsedSessionTime >= maxSessionTime) {
-      //     console.log('time\'s up')
-      //     // terminateAssemblySession() 
-      //    }
-
-      // } else {
-     
-      //     if (checkForMaxWords(res.words, maxWords)) {
-            
-      //       // terminateAssemblySession();
-      //       // recorder.pauseRecording();
-            
-      //       if (res.message_type == "FinalTranscript") {
-              
-      //         closeSocket();
-      //         console.log(`FINAL TRANSCRIPT received, session terminated`)
-      //         let processedResponse = processResponse(res.text)
-      //         sessionResults = evaluateSession(processedCue, processedResponse)        
-      //         displayResponses(sessionResults)
-      //       }
-
-      //     }
-             
-      // }
-
-      
- 
-      //this takes the value of audio_start from res object (which is 0). Zero then becmoes the key in the destructurin process. This is why in the new 'text' object,  res.text is at index 0. I still am not clear why it looks why res.text is being destructured to an object according to the cl, but looks like an array in the syntax. It is not in array format until Object.keys is applied to 'texts' object. Object.keys returns an array.. but the keys array object below does not have the text! 
-      
-
-      //print utterances
-      // texts[res.audio_start] = res.text;
-      
-      // const keys = Object.keys(texts);
-        
-
-      // keys.sort((a, b) => a - b);
-
-      // // console.log('Keys sorted', keys);
-      
-
-      // for (const key of keys) {
-      //   //need to decipher this 
-      //   if (texts[key]) {
-
-      //     msg += ` ${texts[key]}`;
-      //   }
-      // }
-
-      messageEl.innerText = msg;
     }; //end 'on message' block
 
     socket.onerror = (event) => {
@@ -342,11 +286,11 @@ const run = async () => {
   }
 
 
-  console.log(' isRecording State right before line 277=', isRecording)
-
   isRecording = !isRecording; 
   buttonEl.innerText = isRecording ? 'Stop' : 'Record';
   titleEl.innerText = isRecording ? 'Click stop to end recording!' : 'Click start to begin recording!';
 };
 
+
 buttonEl.addEventListener('click', () => run());
+
