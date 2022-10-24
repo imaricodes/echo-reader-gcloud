@@ -302,24 +302,21 @@ const run = async () => {
 
 // sessionButton.addEventListener('click', () => {
 //   run()
-//   // if (buttonEl.innerText == 'Go') {
-//   //   console.log('go')
-    
-//   // }
-//   // if (buttonEl.innerText == 'Record') {
-//   //   console.log('stop clicked')
-//   // }
-
-//   // run()
 // });
 
-// console.log(goButton)
+console.log(goButton)
+
+let cardStageMessage = createCardStageMessage('Echo Reader uses AI technology to improve reading skills.')
+// let createControlsMessage = createControlsMessage('')
 
 goButton.addEventListener('click', () => {
-  studentReadImg.remove()
-  sessionButton = createSessionButton();
-  console.log(sessionButton)
   goButton.remove();
+  // createCardStageMessage('Click the start button. Read the sentence presented here when the countdown completes')
+  createControlsMessage('Click the start button. Read the sentence presented below when the countdown completes')
+  sessionButton = createSessionButton();
+  cardStageMessage.remove()
+  studentReadImg.remove()
+  cardStage.remove()
   
   console.log('go button removed');
 })

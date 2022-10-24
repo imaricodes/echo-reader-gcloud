@@ -108,7 +108,7 @@ let createGoButton = () => {
 
 let createSessionButton = () => {
     let sessionButton = document.createElement("button")
-    sessionButton.classList.add('btn', 'btn--circle', 'btn--green')
+    sessionButton.classList.add('btn', 'btn--circle', 'btn--green', 'btn--text')
     sessionButton.setAttribute('id', 'sessionButton')
     sessionButton.innerText='Start'
    
@@ -120,4 +120,21 @@ let createSessionButton = () => {
     })
 
     return sessionButton
+}
+
+
+let createCardStageMessage = (message) => {
+    let cardStageMessage = document.createElement("p")
+    cardStageMessage.classList.add('card-stage__message')
+    cardStageMessage.setAttribute('id', 'card-stage__message')
+    cardStageMessage.innerText = message;
+    cardStage.append(cardStageMessage)
+    
+    return cardStageMessage
+}
+
+let createControlsMessage = (message) => {
+    let controlsMessage = document.querySelector('.controls__message')
+    controlsMessage.innerText = message;
+    
 }

@@ -28,6 +28,7 @@ header{
     box-shadow: 0 0 32px 0 rgb(0 0 0 / 16%);
     height: 10vh;
     margin-bottom: 50px;
+    color: #A25A5A;
 }
 
 
@@ -64,11 +65,15 @@ header{
 }
 
 .controls__message {
+    max-width: 50%;
+}
+
+.controls__message__p {
     color: var(--textColor);
     font-size: 40px;
 }
 
-.card__stage {
+.card-stage {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -78,6 +83,12 @@ header{
     border-radius: 8px;
     padding: 55px 65px;
 }
+
+.card-stage__message {
+    font-size: 35px;
+}
+
+
 
 
 .cue-container{
