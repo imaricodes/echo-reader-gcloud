@@ -8,6 +8,8 @@ const buttonEl = document.getElementById('start-button');
 
 const titleEl = document.getElementById('real-time-title');
 
+let studentReadImg = document.querySelector('.student-read-img')
+
 // set initial state of application variables
 // messageEl.style.display = 'none';
 let isRecording = false;
@@ -314,6 +316,7 @@ const run = async () => {
 // console.log(goButton)
 
 goButton.addEventListener('click', () => {
+  studentReadImg.remove()
   sessionButton = createSessionButton();
   console.log(sessionButton)
   goButton.remove();

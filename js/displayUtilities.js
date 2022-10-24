@@ -6,6 +6,7 @@ let showCue = document.getElementById('displayCue')
 let controls = document.querySelector('.controls')
 let controlsMessage = document.querySelector('controls__message')
 
+
 //Create elements and display responses
 
 let displayResponses = (sessionResults) => {
@@ -97,7 +98,7 @@ let displayInstructions = () => {
 
 let createGoButton = () => {
     let goButton = document.createElement("button")
-    goButton.classList.add('btn', 'btn--circle')
+    goButton.classList.add('btn', 'btn--circle', 'btn--green', 'btn--text')
     goButton.setAttribute('id', 'goButton')
     goButton.innerText='Go'
     controls.append(goButton)

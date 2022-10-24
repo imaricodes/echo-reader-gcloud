@@ -23,6 +23,13 @@ main {
     
 }
 
+header{
+    background-color: #FCE8E8;
+    box-shadow: 0 0 32px 0 rgb(0 0 0 / 16%);
+    height: 10vh;
+    margin-bottom: 50px;
+}
+
 
 .controls{
     /* border: 2px solid purple; */
@@ -32,12 +39,11 @@ main {
     gap: 60px;
     /* width: 100%; */
     padding: 30px;
-    margin-bottom: 100px;
+    /* margin-bottom: 50px; */
 }
 
 .btn { 
-    height: 60px;
-    width: 60px;
+   
     color: #ffff;
     cursor: pointer;
 }
@@ -47,8 +53,14 @@ main {
 }
 
 .btn--circle {
+    height: 100px;
+    width: 100px;
     border: none;
     border-radius: 50%;
+}
+
+.btn--text {
+    font-size: 25px;
 }
 
 .controls__message {
