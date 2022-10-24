@@ -2,17 +2,17 @@
 //'npm run client' to start browser client
 
 // required dom elements
-const buttonEl = document.getElementById('button');
-const messageEl = document.getElementById('message');
+const buttonEl = document.getElementById('start-button');
+// const messageEl = document.getElementById('message');
 const titleEl = document.getElementById('real-time-title');
 
 // set initial state of application variables
-messageEl.style.display = 'none';
+// messageEl.style.display = 'none';
 let isRecording = false;
 let socket;
 let recorder;
 let sessionResults;
-let msg = '';
+// let msg = '';
 
 let maxSessionTime = 2;
 
@@ -28,8 +28,7 @@ processedCue = processCue(readingPrompts);
 
 let maxWords = processedCue.display.length;
 console.log('set maxwords to', maxWords)
-//display selected cue, fixed to index 1 of reading Prompts for now, dynamic later
-displayCue(processedCue)
+
 
 console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 
@@ -146,7 +145,8 @@ console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 //main entry point
 const run = async () => {
   
-
+  //display selected cue, fixed to index 1 of reading Prompts for now, dynamic later
+  displayCue(processedCue)
 
   if (isRecording) { 
     //if socket is open, close it
@@ -234,7 +234,7 @@ const run = async () => {
     // once socket is open, , create instance of recordRTC, begin recording
     socket.onopen = () => {
       
-      messageEl.style.display = '';
+      // messageEl.style.display = '';
       navigator.mediaDevices.getUserMedia({ audio: true }) //this opens client media (asks permission first)
         //pass the media stream to RecordRTC object
         .then((stream) => {
@@ -287,10 +287,21 @@ const run = async () => {
 
 
   isRecording = !isRecording; 
-  buttonEl.innerText = isRecording ? 'Stop' : 'Record';
+  buttonEl.innerText = isRecording ? 'Cancel' : 'Record';
   titleEl.innerText = isRecording ? 'Click stop to end recording!' : 'Click start to begin recording!';
 };
 
 
-buttonEl.addEventListener('click', () => run());
+buttonEl.addEventListener('click', () => {
+  run()
+  // if (buttonEl.innerText == 'Go') {
+  //   console.log('go')
+    
+  // }
+  // if (buttonEl.innerText == 'Record') {
+  //   console.log('stop clicked')
+  // }
+
+  // run()
+});
 

@@ -7,6 +7,7 @@
   <title>Document</title>
   <link rel="stylesheet" href="./css/reset.css">
   <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/my.css">
   <link rel="stylesheet" href="./css/loader.css">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,20 +21,35 @@
     <h1 class="header__title">Real-Tim Transcription</h1>
     <p class="header__sub-title">Try AssemblyAI's new real-time transcription endpoint!</p>
   </header>
+  <main>
+    <div class="controls">
+
+      <div class="controls__message">
+        Click start to begin.
+      </div>
+      <button id='start-button' class="btn btn--circle btn--green">Start</button>
+    </div>
+    <div id="card-stage" class="card__stage">
+      <!-- <div class="response-container" id = "cue-container"></div> -->
+      <!-- <div class="response-container" id = "response-container"></div> -->
+    </div>
+    
+  </main>
+
+
   <div class="real-time-interface">
+    
     <p id="real-time-title" class="real-time-interface__title">Click start to begin recording!</p>
     <p id="button" class="real-time-interface__button">Go</p>
-    <p id="message" class="real-time-interface__message"></p>
    
     <p id="displayResult"></p>
   </div>
-  <div class="response-container" id = "cue-container"></div>
-  <div class="response-container" id = "response-container"></div>
-  <div class="loader">
+
+  <!-- <div class="loader">
     <div class="inner one"></div>
     <div class="inner two"></div>
     <div class="inner three"></div>
-  </div>
+  </div> -->
   
 
   <script src="./donottrack/devHelperUtilities.js"></script>

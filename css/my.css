@@ -1,0 +1,71 @@
+:root{
+    --buttonGreen: #09ad09;
+    --textColor: #5b5e5b;
+       
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.controls{
+    /* border: 2px solid purple; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    /* width: 100%; */
+    padding: 30px;
+    margin-bottom: 100px;
+}
+
+.btn { 
+    height: 60px;
+    width: 60px;
+    color: #ffff;
+    cursor: pointer;
+}
+
+.btn--green {
+    background-color: var(--buttonGreen);
+}
+
+.btn--circle {
+    border: none;
+    border-radius: 50%;
+}
+
+.controls__message {
+    color: var(--textColor);
+    font-size: 40px;
+}
+
+.card__stage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 60%;
+    /* height: 200px; */
+    box-shadow: 0px 4px 7px 0px rgba(0,0,0,0.23);
+    border-radius: 8px;
+}
+
+
+.cue-container{
+    font-family: 'Roboto', sans-serif;
+    font-size: 36px;
+    display: flex;
+    /* background-color: pink; */
+    width: 100%;
+    padding: 10px;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+
+
+
+
