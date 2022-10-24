@@ -1,13 +1,26 @@
 :root{
     --buttonGreen: #09ad09;
-    --textColor: #5b5e5b;
+    --textColor: #707070;
        
+}
+
+
+body {
+    color: var(--textColor);
+    font-family: 'Helvetica Neue', sans-serif;
+}
+
+p{
+    
+    font-size: 56px;
+    font-weight:500;
 }
 
 main {
     display: flex;
     flex-direction: column;
     align-items: center;
+    
 }
 
 
@@ -47,10 +60,11 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-width: 60%;
+    max-width: 50%;
     /* height: 200px; */
     box-shadow: 0px 4px 7px 0px rgba(0,0,0,0.23);
     border-radius: 8px;
+    padding: 55px 65px;
 }
 
 

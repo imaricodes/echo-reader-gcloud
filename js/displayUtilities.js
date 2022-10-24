@@ -3,6 +3,8 @@
 let cardStage = document.getElementById('card-stage')
 let showResult = document.getElementById('displayResult')
 let showCue = document.getElementById('displayCue')
+let controls = document.querySelector('.controls')
+let controlsMessage = document.querySelector('controls__message')
 
 //Create elements and display responses
 
@@ -81,7 +83,40 @@ let displayCue = (processedCue) => {
 
         // cardStage.appendChild(parentDiv)
     }
+}
 
+
+let displayInstructions = () => {
+    let instructions = document.createElement("p")
+    instructions.classList.add('instructions')
+    cueContainer.setAttribute('id', 'instructions')
+    instructions.innerText="After clicking start, wait for the countdown and read the sentence shown here."
+    cardStage.append(instructions)
 
 }
 
+let createGoButton = () => {
+    let goButton = document.createElement("button")
+    goButton.classList.add('btn', 'btn--circle')
+    goButton.setAttribute('id', 'goButton')
+    goButton.innerText='Go'
+    controls.append(goButton)
+
+    return goButton
+}
+
+let createSessionButton = () => {
+    let sessionButton = document.createElement("button")
+    sessionButton.classList.add('btn', 'btn--circle', 'btn--green')
+    sessionButton.setAttribute('id', 'sessionButton')
+    sessionButton.innerText='Start'
+   
+
+    controls.append(sessionButton)
+    sessionButton.addEventListener('click', () => {
+        console.log('session button clicked')
+        run()
+    })
+
+    return sessionButton
+}

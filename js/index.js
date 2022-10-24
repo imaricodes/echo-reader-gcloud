@@ -3,7 +3,9 @@
 
 // required dom elements
 const buttonEl = document.getElementById('start-button');
-// const messageEl = document.getElementById('message');
+
+
+
 const titleEl = document.getElementById('real-time-title');
 
 // set initial state of application variables
@@ -12,6 +14,7 @@ let isRecording = false;
 let socket;
 let recorder;
 let sessionResults;
+let sessionButton;
 // let msg = '';
 
 let maxSessionTime = 2;
@@ -32,6 +35,9 @@ console.log('set maxwords to', maxWords)
 
 console.log(`INITAL PROCESSED CUE: ${JSON.stringify(processedCue)}`)
 
+
+let goButton = createGoButton()
+// const goButton = document.getElementById('goButton')
 
 /** *********  FUNCTIONS ************ */
 
@@ -287,21 +293,30 @@ const run = async () => {
 
 
   isRecording = !isRecording; 
-  buttonEl.innerText = isRecording ? 'Cancel' : 'Record';
-  titleEl.innerText = isRecording ? 'Click stop to end recording!' : 'Click start to begin recording!';
+  // buttonEl.innerText = isRecording ? 'Cancel' : 'Record';
+  // titleEl.innerText = isRecording ? 'Click stop to end recording!' : 'Click start to begin recording!';
 };
 
 
-buttonEl.addEventListener('click', () => {
-  run()
-  // if (buttonEl.innerText == 'Go') {
-  //   console.log('go')
+// sessionButton.addEventListener('click', () => {
+//   run()
+//   // if (buttonEl.innerText == 'Go') {
+//   //   console.log('go')
     
-  // }
-  // if (buttonEl.innerText == 'Record') {
-  //   console.log('stop clicked')
-  // }
+//   // }
+//   // if (buttonEl.innerText == 'Record') {
+//   //   console.log('stop clicked')
+//   // }
 
-  // run()
-});
+//   // run()
+// });
 
+// console.log(goButton)
+
+goButton.addEventListener('click', () => {
+  sessionButton = createSessionButton();
+  console.log(sessionButton)
+  goButton.remove();
+  
+  console.log('go button removed');
+})
