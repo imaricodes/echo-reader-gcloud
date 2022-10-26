@@ -11,6 +11,7 @@ let controlsMessage = document.querySelector('controls__message')
 
 let displayResponses = (sessionResults) => {
     
+    //this is length of the cue array
     const length = sessionResults[0].length
 
         //create response container
@@ -20,6 +21,8 @@ let displayResponses = (sessionResults) => {
     cardStage.append(responseContainer)
 
     for (let i = 0; i < length; i++) {
+
+        console.log('LOOPED ', i + 1)
         const newDiv = document.createElement("div")
       
         //add general class to new div (this works)
@@ -50,7 +53,7 @@ let displayResponses = (sessionResults) => {
 let displayCue = (processedCue) => {
 
 
-    
+    console.log('running display cue')
     const cueArray = processedCue.display.map(item => item)
 
     // console.dir(`HAM ${cueArray}`)

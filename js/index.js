@@ -19,11 +19,11 @@ let sessionResults;
 let sessionButton;
 // let msg = '';
 
-let maxSessionTime = 2;
+let maxSessionTime = 5;
 
 let readingPrompts = [
   'I like apples, oranges, and feet.',
-  'Many bees do not sting!'
+  'My bees do not sting.'
   
 ]
 
@@ -44,15 +44,17 @@ let goButton = createGoButton()
 /** *********  FUNCTIONS ************ */
 
     let checkForMaxWords = (arr, maxWords) => {
-      if (arr.length >= maxWords) {
+      if (arr.length > maxWords) {
         console.log('MAX WORDS REACHED');
         console.log(`current array length: ${arr.length}`)
         
         // terminateAssemblySession();
         // closeSocket();
         return true
-      } 
-      return false
+      } else {
+        console.log('MAX WORDS NOT REACHED')
+        return false
+      }
     }
     
 
@@ -77,11 +79,9 @@ let goButton = createGoButton()
     let evaluateSession = (cueObj, responseObj) => {
       
       let cueEvaluate = cueObj.evaluate.map( (item => item))
-      
       let cueDisplay = cueObj.display.map( (item => item))
       
       let responseEvaluate = responseObj.evaluate.map( (item => item))
-      
       let responseDisplay = responseObj.display.map( (item => item))
       
 
@@ -128,22 +128,21 @@ let goButton = createGoButton()
       let endTime = Date.now();
       let elapsedSessionTime = (endTime - startSessionTime)/1000;
       let result = false;  
+      console.log('elapsed session time' , elapsedSessionTime)
         
       if (elapsedSessionTime >= maxSessionTime) {
         result = true;
-        console.log('TIMED OUT!')
+        console.log('TIMED OUT!, close session and socket', result)
+        // terminateAssemblySession();
+        // closeSocket();
+        return result
+      } else { 
+        return result;
       }
       
-      console.log('elapsed session time' , elapsedSessionTime)
 
-      return result;
     }
 
-
-    let truncateArray = (arr, maxWords) => {
-      arr.splice(maxWords, arr.length-maxWords)
-      console.log('array has been truncated')
-    }
 
 
         /** *********  END FUNCTIONS ************ */
@@ -189,24 +188,31 @@ const run = async () => {
     
       const res = JSON.parse(message.data);
       
-      console.log('first return: ', JSON.stringify(res.message_type))
+      console.log('On message mesage type: ', JSON.stringify(res.message_type))
       if (res.message_type == "SessionBegins") {
           console.log('first beer on me')
           console.log('is there an array? ', res.words)
       }
       
-      calculateTimeOut(startSessionTime, maxSessionTime)
+      // calculateTimeOut(startSessionTime, maxSessionTime)
       /** process returned data */
       if (typeof res.words == "undefined") {
-        console.log('about to return')
+        console.log('array undefined return to top, checking for new message')
+        calculateTimeOut(startSessionTime, maxSessionTime)
         return
       } else {
-          
+          if (!res.words.length) {
+            calculateTimeOut(startSessionTime, maxSessionTime)
+            console.log('no length')
+          }
+          //if array exists:
           if (res.words.length) {
-            console.log('partial array: ', JSON.stringify(res.words))
+            console.log('partial array 202: ', JSON.stringify(res.words))
             console.log('array has length of: ', res.words.length)
+
+            
+            //if array exists, less than max words, but time is out:
             if (checkForMaxWords(res.words, maxWords)) {
-              
               // terminateAssemblySession();
               // recorder.pauseRecording();
               if (res.message_type == "FinalTranscript") {
@@ -215,12 +221,16 @@ const run = async () => {
                 closeSocket();
                 recorder.stopRecording()
                 console.log(`FINAL TRANSCRIPT received, session terminated`)
-                truncateArray(res.words)
-                console.log('new array length ', res.words)
-                let processedResponse = processResponse(res.text)
-                sessionResults = evaluateSession(processedCue, processedResponse)  
+                
+                // console.log('new array length ', res.words)
+                let processedResponse = processResponse(res.text, maxWords)
+                sessionResults = evaluateSession(processedCue, processedResponse)
+                console.log(`SESSION RESULTS:`,JSON.stringify(sessionResults) )  
                 displayResponses(sessionResults)
-              }
+              } //TODO: why not getting to this time out block?
+            } else if (calculateTimeOut(startSessionTime, maxSessionTime)) {
+              console.log('array is present, but time is up, proceed with processing')
+              console.log('EVALUATE NOW')
             }
           }
    
@@ -316,7 +326,7 @@ goButton.addEventListener('click', () => {
   sessionButton = createSessionButton();
   cardStageMessage.remove()
   studentReadImg.remove()
-  cardStage.remove()
+  // cardStage.remove()
   
   console.log('go button removed');
 })
