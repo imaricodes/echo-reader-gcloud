@@ -59,7 +59,7 @@ let goButton = createGoButton()
     
 
     //compare strings index and return t/f for match
-    //TODO: compare lower case strings, remove punctuation before comparison.. comparision happens after final transcript
+
     const compareStrings = (a,b) => {
         let result
 
@@ -207,8 +207,9 @@ const run = async () => {
           }
           //if array exists:
           if (res.words.length) {
-            console.log('partial array 202: ', JSON.stringify(res.words))
-            console.log('array has length of: ', res.words.length)
+            
+            console.log('array returned has length of: ', res.words.length)
+            console.log(JSON.stringify(res.words))
 
             
             //if array exists, less than max words, but time is out:
@@ -231,6 +232,10 @@ const run = async () => {
             } else if (calculateTimeOut(startSessionTime, maxSessionTime)) {
               console.log('array is present, but time is up, proceed with processing')
               console.log('EVALUATE NOW')
+              let processedResponse = processResponse(res.text, maxWords)
+                sessionResults = evaluateSession(processedCue, processedResponse)
+                console.log(`SESSION RESULTS:`,JSON.stringify(sessionResults) )  
+                displayResponses(sessionResults)
             }
           }
    
