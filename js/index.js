@@ -213,70 +213,7 @@ const run = async () => {
           console.log('Received array status: ', JSON.stringify(res.words))
           return
         }
-
-
-        //if time over and array available close socket, process transcript (res) if available || if time is over and array not available, close session
-
-        
-        //if time NOT over and arrary available, check max words
       }
-
-
-
-      // if (res.message_type == "FinalTranscript") {
-      //   console.log('final transcript')
-      //   console.log('is there an array? ', res.words)
-      // }
-      
-      
-      // calculateTimeOut(startSessionTime, maxSessionTime)
-      /** process returned data */
-      // if (typeof res.words == "undefined") {
-      //   console.log('array undefined return to top, checking for new message')
-      //   calculateTimeOut(startSessionTime, maxSessionTime)
-      //   return
-      // } else {
-      //     if (!res.words.length) {
-      //       calculateTimeOut(startSessionTime, maxSessionTime)
-      //       console.log('no length')
-      //     }
-      //     //if array exists:
-      //     if (res.words.length) {
-            
-      //       console.log('array returned has length of: ', res.words.length)
-      //       console.log(JSON.stringify(res.words))
-
-            
-      //       //if array exists, less than max words, but time is out:
-      //       if (checkForMaxWords(res.words, maxWords)) {
-      //         // terminateAssemblySession();
-      //         // recorder.pauseRecording();
-      //         if (res.message_type == "FinalTranscript") {
-      //           console.log('isRecording state during final transscipt execution', isRecording)
-      //           terminateAssemblySession();
-      //           closeSocket();
-      //           recorder.stopRecording()
-      //           console.log(`FINAL TRANSCRIPT received, session terminated`)
-                
-      //           // console.log('new array length ', res.words)
-      //           let processedResponse = processResponse(res.text, maxWords)
-      //           sessionResults = evaluateSession(processedCue, processedResponse)
-      //           console.log(`SESSION RESULTS:`,JSON.stringify(sessionResults) )  
-      //           displayResponses(sessionResults)
-      //         } //TODO: why not getting to this time out block?
-      //       } else if (calculateTimeOut(startSessionTime, maxSessionTime)) {
-      //         console.log('array is present, but time is up, proceed with processing')
-      //         console.log('EVALUATE NOW')
-      //         let processedResponse = processResponse(res.text, maxWords)
-      //           sessionResults = evaluateSession(processedCue, processedResponse)
-      //           console.log(`SESSION RESULTS:`,JSON.stringify(sessionResults) )  
-      //           displayResponses(sessionResults)
-      //       }
-      //     }
-   
-      // }
-    
-
     }; //end 'on message' block
 
     socket.onerror = (event) => {
