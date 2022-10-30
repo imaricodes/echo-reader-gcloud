@@ -20,6 +20,7 @@ let sessionButton;
 // let msg = '';
 
 let maxSessionTime = 6;
+console.log('MAX TIME ', maxSessionTime)
 
 let readingPrompts = [
   'I like apples, oranges, and feet.',
@@ -170,6 +171,7 @@ const run = async () => {
   } else {
       const response = await fetch('http://localhost:8000'); // get temp session token from server.js (backend)
       const data = await response.json();
+      
 
     if(data.error){
       alert(data.error)}
