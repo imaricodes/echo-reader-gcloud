@@ -1,4 +1,7 @@
 import  {displayCue, createGoButton, createSessionButton, createCardStageMessage, createControlsMessage} from "./displayUtilities.js"
+
+import {processCue, processResponse} from "./processes.js"
+
 //'npm run client' to start browser client
 
 // required dom elements

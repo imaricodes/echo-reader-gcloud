@@ -3,7 +3,7 @@
 
 
 //pass in array
-function processCue (readingPrompts) {
+export function processCue (readingPrompts) {
     let arr = []
     
     const regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
@@ -44,7 +44,7 @@ let normalizeArrayLength = (maxWords, responseArray) => {
 
 
 
-function processResponse (response, maxWords) {
+export function processResponse (response, maxWords) {
     console.log('PROCESSING RESPONSE...')
     //response is passed in as a string
     
