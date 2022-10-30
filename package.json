@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node ./js/server.js",
-    "client": "serve -l 3000"
+    "server": "nodemon ./js/server.js",
+    "start": "snowpack dev"
   },
   "keywords": [],
   "author": "",
@@ -15,10 +15,13 @@
   "dependencies": {
     "axios": "^0.21.1",
     "cors": "^2.8.5",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "socket.io": "^4.5.3",
+    "socket.io-client": "^4.5.3"
   },
   "devDependencies": {
     "dotenv": "^16.0.1",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "snowpack": "^3.8.8"
   }
 }

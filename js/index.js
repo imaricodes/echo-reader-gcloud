@@ -2,6 +2,8 @@ import  {displayCue, createGoButton, createSessionButton, createCardStageMessage
 
 import {processCue, processResponse} from "./languageProcessing.js"
 
+import {io} from 'socket.io-client'
+
 //'npm run client' to start browser client
 
 // required dom elements
