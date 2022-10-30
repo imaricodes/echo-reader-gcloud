@@ -1,6 +1,6 @@
 import  {displayCue, createGoButton, createSessionButton, createCardStageMessage, createControlsMessage} from "./displayUtilities.js"
 
-import {processCue, processResponse} from "./processes.js"
+import {processCue, processResponse} from "./languageProcessing.js"
 
 //'npm run client' to start browser client
 
@@ -172,22 +172,16 @@ export const run = async () => {
       recorder = null;
     }
   } else {
-      const response = await fetch('http://localhost:8000'); // get temp session token from server.js (backend)
-      const data = await response.json();
+   
       
 
-    if(data.error){
-      alert(data.error)}
-
-    const { token } = data;
-
-    // establish wss with AssemblyAI (AAI) at 16000 sample rate
-    socket = await new WebSocket(`wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000&token=${token}`);
+    //TODO: CREATE SOCKET IO
+   
     
     //start timer
     let startSessionTime = Date.now(); 
 
- 
+    //TODO: WHAT HAPPENS WHEN IO SOCKET MESSAGE IS RECEIVED
     socket.onmessage = (message) => {
       
       const res = JSON.parse(message.data);
@@ -231,7 +225,7 @@ export const run = async () => {
       socket = null;
     }
 
-    // once socket is open, , create instance of recordRTC, begin recording
+   //TODO: WHAT HAPPENS WHEN IO SOCKET IS OPENED (INITITATE WEBRTC RECORDER, send data to socket io)
     socket.onopen = () => {
       
       // messageEl.style.display = '';
@@ -282,9 +276,10 @@ export const run = async () => {
         .catch((err) => console.error(err));
     };
     console.log('end of else block, isRecording State=', isRecording)
-
   }
 
+
+  //END SOCKET IO LOGIC
 
   isRecording = !isRecording; 
   // buttonEl.innerText = isRecording ? 'Cancel' : 'Record';
