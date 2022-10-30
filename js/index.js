@@ -24,7 +24,7 @@ console.log('MAX TIME ', maxSessionTime)
 
 let readingPrompts = [
   'I like apples, oranges, and feet.',
-  'My bees do not sting.'
+  'My bees do not sting.' 
   
 ]
 
