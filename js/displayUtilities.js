@@ -1,4 +1,4 @@
-
+import {run} from "./index.js"
 
 let cardStage = document.getElementById('card-stage')
 let showResult = document.getElementById('displayResult')
@@ -9,7 +9,7 @@ let controlsMessage = document.querySelector('controls__message')
 
 //Create elements and display responses
 
-let displayResponses = (sessionResults) => {
+export let displayResponses = (sessionResults) => {
     
     //this is length of the cue array
     const length = sessionResults[0].length
@@ -50,7 +50,7 @@ let displayResponses = (sessionResults) => {
 
 //Create elements and display cue words
 
-let displayCue = (processedCue) => {
+export let displayCue = (processedCue) => {
 
 
     console.log('running display cue')
@@ -99,7 +99,7 @@ let displayInstructions = () => {
 
 }
 
-let createGoButton = () => {
+export let createGoButton = () => {
     let goButton = document.createElement("button")
     goButton.classList.add('btn', 'btn--circle', 'btn--green', 'btn--text')
     goButton.setAttribute('id', 'goButton')
@@ -109,7 +109,7 @@ let createGoButton = () => {
     return goButton
 }
 
-let createSessionButton = () => {
+export let createSessionButton = () => {
     let sessionButton = document.createElement("button")
     sessionButton.classList.add('btn', 'btn--circle', 'btn--green', 'btn--text')
     sessionButton.setAttribute('id', 'sessionButton')
@@ -126,7 +126,7 @@ let createSessionButton = () => {
 }
 
 
-let createCardStageMessage = (message) => {
+export let createCardStageMessage = (message) => {
     let cardStageMessage = document.createElement("p")
     cardStageMessage.classList.add('card-stage__message')
     cardStageMessage.setAttribute('id', 'card-stage__message')
@@ -136,8 +136,11 @@ let createCardStageMessage = (message) => {
     return cardStageMessage
 }
 
-let createControlsMessage = (message) => {
+export let createControlsMessage = (message) => {
     let controlsMessage = document.querySelector('.controls__message')
     controlsMessage.innerText = message;
-    
 }
+
+
+
+   

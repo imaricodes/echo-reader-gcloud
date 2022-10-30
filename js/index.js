@@ -1,4 +1,4 @@
-
+import  {displayCue, createGoButton, createSessionButton, createCardStageMessage, createControlsMessage} from "./displayUtilities.js"
 //'npm run client' to start browser client
 
 // required dom elements
@@ -151,7 +151,7 @@ let goButton = createGoButton()
 
 // runs real-time transcription and handles global variables
 //main entry point
-const run = async () => {
+export const run = async () => {
   
   //display selected cue, fixed to index 1 of reading Prompts for now, dynamic later
   displayCue(processedCue)
