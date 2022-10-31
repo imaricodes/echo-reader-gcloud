@@ -4,8 +4,14 @@ let io = require('socket.io')(3000, {
 
 io.on('connection', socket => {
   console.log(socket.id)
-  socket.on('custom-event', (string) => {
-      console.log(string)
+
+  //TODO: send this stream to google speech
+  socket.on('audioStream', (obj) => {
+      console.log('RECEIVING STREAM')
+      console.log(obj)
+      
   })
  
 })
+
+console.log('socket server running')

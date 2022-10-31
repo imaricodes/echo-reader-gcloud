@@ -2,15 +2,21 @@ import  {displayCue, createGoButton, createSessionButton, createCardStageMessage
 
 import {processCue, processResponse} from "./languageProcessing.js"
 
+import { startWebMic } from "./webRecord.js"
+
+
 import {io} from 'socket.io-client'
 
-const socket = io('http://localhost:3000')
+export let socket;
 
 
-socket.on('connect', () => {
-    console.log(`you connected with id: ${socket.id}`)
+// const socket = io('http://localhost:3000')
+
+
+// socket.on('connect', () => {
+//     console.log(`you connected with id: ${socket.id}`)
     
-})
+// })
 
 
 // required dom elements
@@ -159,6 +165,8 @@ let goButton = createGoButton()
         /** *********  END FUNCTIONS ************ */
 
 
+
+
 // runs real-time transcription and handles global variables
 //main entry point
 export const run = async () => {
@@ -183,10 +191,16 @@ export const run = async () => {
       
 
     //TODO: CREATE SOCKET IO
-    const socket = io('http://localhost:3000')
+    socket = io('http://localhost:3000')
 
     socket.on('connect', () => {
-        console.log(`you connected with id: ${socket.id}`)   
+        console.log(`you connected with id: ${socket.id}`)
+        console.log('record now')
+        //open mic
+        startWebMic()
+        
+    
+
     })
     
     //start timer
