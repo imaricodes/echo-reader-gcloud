@@ -2,22 +2,18 @@ let io = require('socket.io')(3000, {
   cors: {origin: ['http://localhost:8080']},
 })
 
-// const fs = require("fs");
-// const readable = fs.createReadStream(obj)
-// const writable = fs.createWriteStream(obj);
-
-const {createReadStream, createWriteStream} = require('fs')
-
-
+let str = require('string-to-stream')
 
 const speech = require('@google-cloud/speech');
   
 // Create a speech client
 const client = new speech.SpeechClient();
 
-
+//Client Request Vars
 const encoding = 'LINEAR16';
+
 const sampleRateHertz = 16000;
+
 const languageCode = 'en-US';
 
 //speech client request header
@@ -52,7 +48,7 @@ const request = {
 
 
 
-//Create socket and listen for audio stream from webRTC
+//Create socket and listen for audio stream from webRTC (webRecord.js)
 
 io.on('connection', socket => {
   console.log(socket.id)
@@ -60,14 +56,13 @@ io.on('connection', socket => {
   //TODO: how to send this stream to google speech?
   socket.on('audioStream', (audio64) => {
 
-    //everytime a new audio string is sent, is needs to be streamed to recognize stream
-    // const readStream = createReadStream(audio64)
-    // const writeStream = createWriteStream ('./file.txt')
-    // readStream.pipe(writeStream).on('error', console.error)
-
+    //this returns error NodeError: write after end
+    str(audio64)
+    .on('error', console.error)
+    .pipe(recognizeStream)
 
       //verified here that stream is being received continuously
-      // console.log('from server: ', audio64)
+      console.log('from webRecord.js: ', audio64)
       
   })
  
