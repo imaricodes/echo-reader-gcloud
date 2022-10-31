@@ -2,9 +2,11 @@ let io = require('socket.io')(3000, {
   cors: {origin: ['http://localhost:8080']},
 })
 
-const fs = require("fs");
+// const fs = require("fs");
 // const readable = fs.createReadStream(obj)
 // const writable = fs.createWriteStream(obj);
+
+const {createReadStream, createWriteStream} = require('fs')
 
 
 
@@ -26,9 +28,7 @@ const request = {
     languageCode: languageCode,
     enableAutomaticPunctuation: true,
   },
-  audio: {
-    content: "THIS IS A PLACHOLDER, DOES THE INCOMING STREAM GO HERE SOMEHOW?"
-  },
+
   interimResults: false, // If you want interim results, set this to true
 };
 
@@ -59,13 +59,15 @@ io.on('connection', socket => {
 
   //TODO: how to send this stream to google speech?
   socket.on('audioStream', (audio64) => {
-      //obj is a JSON object structured like this: {"audio_data": base64 string....}
-    //  fs.createReadStream(obj)
-    //   .pipe(recognizeStream)
+
+    //everytime a new audio string is sent, is needs to be streamed to recognize stream
+    // const readStream = createReadStream(audio64)
+    // const writeStream = createWriteStream ('./file.txt')
+    // readStream.pipe(writeStream).on('error', console.error)
 
 
       //verified here that stream is being received continuously
-      console.log('from server: ', audio64)
+      // console.log('from server: ', audio64)
       
   })
  

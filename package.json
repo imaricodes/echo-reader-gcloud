@@ -18,7 +18,8 @@
     "express": "^4.17.1",
     "http": "^0.0.1-security",
     "socket.io": "^4.5.3",
-    "socket.io-client": "^4.5.3"
+    "socket.io-client": "^4.5.3",
+    "string-to-stream": "^3.0.1"
   },
   "devDependencies": {
     "dotenv": "^16.0.1",
