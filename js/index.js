@@ -4,7 +4,14 @@ import {processCue, processResponse} from "./languageProcessing.js"
 
 import {io} from 'socket.io-client'
 
-//'npm run client' to start browser client
+const socket = io('http://localhost:3000')
+
+
+socket.on('connect', () => {
+    console.log(`you connected with id: ${socket.id}`)
+    
+})
+
 
 // required dom elements
 const buttonEl = document.getElementById('start-button');
@@ -18,7 +25,7 @@ let studentReadImg = document.querySelector('.student-read-img')
 // set initial state of application variables
 // messageEl.style.display = 'none';
 let isRecording = false;
-let socket;
+
 let recorder;
 let sessionResults;
 let sessionButton;
@@ -149,8 +156,6 @@ let goButton = createGoButton()
 
     }
 
-
-
         /** *********  END FUNCTIONS ************ */
 
 
@@ -178,107 +183,21 @@ export const run = async () => {
       
 
     //TODO: CREATE SOCKET IO
-   
+    const socket = io('http://localhost:3000')
+
+    socket.on('connect', () => {
+        console.log(`you connected with id: ${socket.id}`)   
+    })
     
     //start timer
     let startSessionTime = Date.now(); 
 
-    //TODO: WHAT HAPPENS WHEN IO SOCKET MESSAGE IS RECEIVED
-    socket.onmessage = (message) => {
-      
-      const res = JSON.parse(message.data);
-      
-      // console.log('On message message type: ', JSON.stringify(res.message_type))
-      if (res.message_type == "SessionBegins") {
-        console.log(`Received new message: `, res.message_type)
-        console.log('Received array status: ', JSON.stringify(res.words))
-      }
+// 
 
-      if (res.message_type == "PartialTranscript") {
-        console.log(`Received new message: `, res.message_type)
-
-        //if time is out and array not available, end session
-        if(calculateTimeOut(startSessionTime, maxSessionTime) && !res.words.length){
-          console.log('Time is up and no array returned')
-          console.log('Received array status: ', JSON.stringify(res.words))
-          recorder = null;
-          console.log(recorder)
-          // terminateAssemblySession();
-          // closeSocket();
-          return
-        }
-
-        // if time NOT over and array not available, continue
-        if(!calculateTimeOut(startSessionTime, maxSessionTime) && !res.words.length){
-          console.log('Time not up, no array returned')
-          console.log('Received array status: ', JSON.stringify(res.words))
-          return
-        }
-      }
-    }; //end 'on message' block
-
-    socket.onerror = (event) => {
-      console.error(event);
-      socket.close();
-    }
-    
-    socket.onclose = event => {
-      console.log('CLOSING SOCKET: ', event);
-      socket = null;
-    }
-
-   //TODO: WHAT HAPPENS WHEN IO SOCKET IS OPENED (INITITATE WEBRTC RECORDER, send data to socket io)
-    socket.onopen = () => {
-      
-      // messageEl.style.display = '';
-      navigator.mediaDevices.getUserMedia({ audio: true }) //this opens client media (asks permission first)
-        //pass the media stream to RecordRTC object
-        .then((stream) => {
-          recorder = new RecordRTC(stream, {
-            type: 'audio',
-            mimeType: 'audio/webm;codecs=pcm', // endpoint requires 16bit PCM audio
-            recorderType: StereoAudioRecorder,
-            timeSlice: 250, // set 250 ms intervals of data that sends to AAI, data sent to 'ondataavailableblob' every 250 ms
-            desiredSampRate: 16000,
-            numberOfAudioChannels: 1, // real-time requires only one channel
-            bufferSize: 4096,
-            audioBitsPerSecond: 128000,
-            //read about ondataavailable here: https://www.w3.org/TR/mediastream-recording/
-            //ondataavailable is a method of the webRTC api, but is being used by recordRTC
-            ondataavailable: (blob) => {
-              //FileReader() reads incoming stream.  https://developer.mozilla.org/en-US/docs/Web/API/FileReader
-              //QUESTION: How does FileReader do this continuously? How does it know when to stop?
-              const reader = new FileReader();
-
-              //.onload is called when the file has been successfully loaded, so when audio is received, this happens
-              //data is sent to assembly ai when onload happens
-              //QUESTION: how does reader know to receive the blob? I don't see it passed in.. Answer: below, the blob is passed to the FileReader() object named 'reader' which declared above. reader.readAsDataURL(blob); can actually be set right after 'reader' is declared. The location appears to be agnostic
-              reader.onload = () => {
-                //convert sream data (blob) audio to base64
-                const base64data = reader.result;
-
-              
-
-                // if socket is open, send data to socket endpoint
-                if (socket) {
-                  //what's happenong with the split... the blog starts with 'base64,'. split returns an array which in this case will have 'base64' at index 0. Since the data we want (the data after 'base64,') is at index [1], we indicate that with [1] after the string to split on
-                  socket.send(JSON.stringify(
-                    { audio_data: base64data.split('base64,')[1]}
-                    ));
-                }
-              };
-              //this is how blob is passed to reader
-              reader.readAsDataURL(blob);
-  
-            },
-          });
-
-          recorder.startRecording();
-        })
-        .catch((err) => console.error(err));
-    };
     console.log('end of else block, isRecording State=', isRecording)
   }
+
+
 
 
   //END SOCKET IO LOGIC
